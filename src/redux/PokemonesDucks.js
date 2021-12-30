@@ -117,6 +117,16 @@ export const anteriorPokemonAccion = () => async (dispatch, getState) => {
 
 export const detallePokemonAccion = (url) => async (dispatch, getState) => {
 
+    if (localStorage.getItem(url)) {
+
+        dispatch({
+            type: DETALLE_POKEMON_EXITO,
+            payload: JSON.parse(localStorage.getItem(url))
+        })
+        console.log('Obteniendo desde LocalStorage')
+        return
+    }
+
     try {
         const res = await axios.get(url)
         dispatch({
@@ -127,6 +137,12 @@ export const detallePokemonAccion = (url) => async (dispatch, getState) => {
                 imagen: res.data.sprites.front_default
             }
         })
+        console.log('Obteniendo desde API')
+        localStorage.setItem(url, JSON.stringify({
+            nombre: res.data.name,
+            habilidad: res.data.abilities[0].ability.name,
+            imagen: res.data.sprites.front_default
+        }))
     } catch (error) {
         console.log(error)
     }
